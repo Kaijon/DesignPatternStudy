@@ -54,13 +54,40 @@ int handler(const vector<int> v, const ICompare &compare) {
     return res;
 }
 
-// Version 3, C++
+// Version 3, C++ Sort
 bool Greater(int a, int b) {
     return a > b;    
 }
 
 bool Less(int a, int b) {
     return a < b;    
+}
+
+// Version 4, C++ generic
+struct isGreater {
+    bool Comparator(int a, int b) const;
+};
+struct isLess {
+    bool Comparator(int a, int b) const;
+};
+bool isGreater::Comparator(int a, int b) const {
+    return a > b;
+}
+bool isLess::Comparator(int a, int b) const {
+    return a < b;
+}
+
+template<typename TComparator>
+int handlerV2(const vector<int> v, const TComparator &comparator);
+
+template<typename TComparator>
+int handlerV2(const vector<int> v, const TComparator &comparator) {
+    int res = v[0];
+    for(size_t i = 1; i < v.size(); i++)
+        if (comparator.Comparator(v[i], res)) {
+            res = v[i];    
+        }  
+    return res;
 }
 
 int main() {
@@ -79,5 +106,8 @@ int main() {
     sort(v.begin(), v.end(), Less);
     cout << "   Min : " << v[0]  << endl;
     
+    cout << "=== Version 4 ===" << endl;
+    cout << "   Max : " << handlerV2(v, isGreater())  << endl;
+    cout << "   Min : " << handlerV2(v, isLess())  << endl;    
     return 0;    
 }
